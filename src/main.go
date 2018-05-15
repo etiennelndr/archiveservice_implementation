@@ -21,112 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-/*package main
+package main
 
 import (
-	"fmt"
-	"math"
-	"math/rand"
-	"time"
+	"os"
 
-	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/plotutil"
-	"gonum.org/v1/plot/vg"
+	work "github.com/etiennelndr/archiveservice_implementation/src/workonvalues"
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	args := os.Args[1:]
 
-	var sinus_list []float64
-
-	var t0 = time.Now().UnixNano() / int64(time.Millisecond)
-	for i := 0; i < 50; i++ {
-		//var t1 = time.Now().UnixNano() / int64(time.Millisecond)
-		var randValue = time.Duration(rand.Int63n(4) + 1)
-		time.Sleep(randValue * time.Millisecond / 5)
-		var t2 = time.Now().UnixNano() / int64(time.Millisecond)
-		var Delta = t2 - t0
-		//var delta = t2 - t1
-		//fmt.Println("Delta =", Delta, "; delta =", delta, "; y =", int(10*math.Sin(float64(Delta))))
-		fmt.Println(randValue)
-
-		// Append Delta and value in the attribute sinus_list
-		sinus_list = append(sinus_list, float64(Delta), math.Sin(float64(Delta)))
+	if len(args) == 0 {
+		panic("There must be at least one argument")
 	}
 
-	fmt.Println(sinus_list)
-
-	// Create the plot
-	p, err := plot.New()
-	if err != nil {
-		panic(err)
+	switch args[0] {
+	case "show":
+		// Go-routine to show all the values
+		work.Show()
+		break
+	case "retrieve":
+		// Go-routine to retrieve all the values
+		work.Retrieve()
+		break
+	case "store":
+		// Go-routine to store all the values
+		work.Store()
+		break
+	default:
+		panic("Unknown operation")
 	}
 
-	p.Title.Text = "Sinus"
-	p.X.Label.Text = "Time"
-	p.Y.Label.Text = "Y"
-
-	var sinusPlot = make(plotter.XYs, len(sinus_list)/2)
-	for i := 0; i < len(sinus_list)/2; i++ {
-		sinusPlot[i].X = sinus_list[i*2]
-		sinusPlot[i].Y = sinus_list[i*2+1]
-	}
-
-	err = plotutil.AddLinePoints(p, "First Sinus", sinusPlot)
-	if err != nil {
-		panic(err)
-	}
-
-	// Save the plot to a PNG file.
-	if err = p.Save(4*vg.Inch, 4*vg.Inch, "sinus.png"); err != nil {
-		panic(err)
-	}
-}*/
-
-package main
-
-import "github.com/veandco/go-sdl2/sdl"
-
-func main() {
-	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		panic(err)
-	}
-	defer sdl.Quit()
-
-	window, err := sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		800, 600, sdl.WINDOW_SHOWN)
-	if err != nil {
-		panic(err)
-	}
-	defer window.Destroy()
-
-	surface, err := window.GetSurface()
-	if err != nil {
-		panic(err)
-	}
-	defer surface.Free()
-	surface.FillRect(nil, 0)
-
-	rect := sdl.Rect{X: 0, Y: 0, W: 200, H: 200}
-	surface.FillRect(&rect, 0xffff0000)
-	window.UpdateSurface()
-
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				println("Quit")
-				running = false
-				break
-			case *sdl.MouseButtonEvent:
-				switch (*sdl.MouseButtonEvent).GetType(event.(*sdl.MouseButtonEvent)) {
-				case sdl.MOUSEBUTTONDOWN:
-					println("clic enfoncé")
-				}
-				break
-			}
-		}
-	}
+	return
 }
