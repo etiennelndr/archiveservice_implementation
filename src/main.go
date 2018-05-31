@@ -49,6 +49,10 @@ func main() {
 		// Go-routine to store all the values
 		work.Store()
 		break
+	case "provider":
+		// Go-routine to start a provider
+		work.Provider()
+		break
 	default:
 		panic("Unknown operation")
 	}

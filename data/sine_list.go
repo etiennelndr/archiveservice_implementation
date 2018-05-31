@@ -27,33 +27,33 @@ import (
 	. "github.com/ccsdsmo/malgo/mal"
 )
 
-type ValueOfSineList []*ValueOfSine
+type SineList []*Sine
 
 var (
-	NullValueOfSineList *ValueOfSineList = nil
+	NullSineList *SineList = nil
 )
 
 const (
-	COM_VALUE_OF_SINE_LIST_TYPE_SHORT_FORM Integer = -0x01
-	COM_VALUE_OF_SINE_LIST_SHORT_FORM      Long    = 0x2000301FFFFFF
+	COM_SINE_LIST_TYPE_SHORT_FORM Integer = -0x01
+	COM_SINE_LIST_SHORT_FORM      Long    = 0x2000301FFFFFF
 )
 
-func NewValueOfSineList(size int) *ValueOfSineList {
-	var list ValueOfSineList = ValueOfSineList(make([]*ValueOfSine, size))
+func NewSineList(size int) *SineList {
+	var list SineList = SineList(make([]*Sine, size))
 	return &list
 }
 
 // ================================================================================
-// Defines COM ValueOfSineList type as an ElementList
+// Defines COM SineList type as an ElementList
 // ================================================================================
-func (list *ValueOfSineList) Size() int {
+func (list *SineList) Size() int {
 	if list != nil {
 		return len(*list)
 	}
 	return -1
 }
 
-func (list *ValueOfSineList) GetElementAt(i int) Element {
+func (list *SineList) GetElementAt(i int) Element {
 	if list != nil {
 		if i < list.Size() {
 			return (*list)[i]
@@ -63,57 +63,57 @@ func (list *ValueOfSineList) GetElementAt(i int) Element {
 	return nil
 }
 
-func (list *ValueOfSineList) AppendElement(element Element) {
+func (list *SineList) AppendElement(element Element) {
 	if list != nil {
-		*list = append(*list, element.(*ValueOfSine))
+		*list = append(*list, element.(*Sine))
 	}
 }
 
-func (*ValueOfSineList) Composite() Composite {
-	return new(ValueOfSineList)
+func (*SineList) Composite() Composite {
+	return new(SineList)
 }
 
 // ================================================================================
-// Defines COM ValueOfSineList type as a MAL Element
+// Defines COM SineList type as a MAL Element
 // ================================================================================
-// Registers COM ValueOfSineList type for polymorpsism handling
+// Registers COM SineList type for polymorpsism handling
 func init() {
-	RegisterMALElement(COM_VALUE_OF_SINE_LIST_SHORT_FORM, NullValueOfSineList)
+	RegisterMALElement(COM_SINE_LIST_SHORT_FORM, NullSineList)
 }
 
 // Returns the absolute short form of the element type.
-func (*ValueOfSineList) GetShortForm() Long {
-	return COM_VALUE_OF_SINE_LIST_SHORT_FORM
+func (*SineList) GetShortForm() Long {
+	return COM_SINE_LIST_SHORT_FORM
 }
 
 // Returns the number of the area this element belongs to
-func (*ValueOfSineList) GetAreaNumber() UShort {
+func (*SineList) GetAreaNumber() UShort {
 	return 2
 }
 
 // Returns the version of the area this element belongs to
-func (v *ValueOfSineList) GetAreaVersion() UOctet {
+func (v *SineList) GetAreaVersion() UOctet {
 	return 1
 }
 
-func (*ValueOfSineList) GetServiceNumber() UShort {
+func (*SineList) GetServiceNumber() UShort {
 	return 3
 }
 
 // Returns the relative short form of the element type.
-func (*ValueOfSineList) GetTypeShortForm() Integer {
+func (*SineList) GetTypeShortForm() Integer {
 	//	return MAL_ENTITY_REQUEST_TYPE_SHORT_FORM & 0x01FFFF00
-	return COM_VALUE_OF_SINE_LIST_TYPE_SHORT_FORM
+	return COM_SINE_LIST_TYPE_SHORT_FORM
 }
 
 // Encodes this element using the supplied encoder.
 // @param encoder The encoder to use, must not be null.
-func (list *ValueOfSineList) Encode(encoder Encoder) error {
-	err := encoder.EncodeUInteger(NewUInteger(uint32(len([]*ValueOfSine(*list)))))
+func (list *SineList) Encode(encoder Encoder) error {
+	err := encoder.EncodeUInteger(NewUInteger(uint32(len([]*Sine(*list)))))
 	if err != nil {
 		return err
 	}
-	for _, e := range []*ValueOfSine(*list) {
+	for _, e := range []*Sine(*list) {
 		encoder.EncodeNullableElement(e)
 	}
 	return nil
@@ -122,38 +122,38 @@ func (list *ValueOfSineList) Encode(encoder Encoder) error {
 // Decodes an instance of this element type using the supplied decoder.
 // @param decoder The decoder to use, must not be null.
 // @return the decoded instance, may be not the same instance as this Element.
-func (list *ValueOfSineList) Decode(decoder Decoder) (Element, error) {
-	return DecodeValueOfSineList(decoder)
+func (list *SineList) Decode(decoder Decoder) (Element, error) {
+	return DecodeSineList(decoder)
 }
 
-// Decodes an instance of ValueOfSineList using the supplied decoder.
+// Decodes an instance of SineList using the supplied decoder.
 // @param decoder The decoder to use, must not be null.
-// @return the decoded ValueOfSineList instance.
-func DecodeValueOfSineList(decoder Decoder) (*ValueOfSineList, error) {
+// @return the decoded SineList instance.
+func DecodeSineList(decoder Decoder) (*SineList, error) {
 	size, err := decoder.DecodeUInteger()
 	if err != nil {
 		return nil, err
 	}
-	list := ValueOfSineList(make([]*ValueOfSine, int(*size)))
+	list := SineList(make([]*Sine, int(*size)))
 	for i := 0; i < len(list); i++ {
-		element, err := decoder.DecodeNullableElement(NullValueOfSine)
+		element, err := decoder.DecodeNullableElement(NullSine)
 		if err != nil {
 			return nil, err
 		}
-		list[i] = element.(*ValueOfSine)
+		list[i] = element.(*Sine)
 	}
 	return &list, nil
 }
 
 // The method allows the creation of an element in a generic way, i.e., using the MAL Element polymorphism.
-func (list *ValueOfSineList) CreateElement() Element {
-	return NewValueOfSineList(0)
+func (list *SineList) CreateElement() Element {
+	return NewSineList(0)
 }
 
-func (list *ValueOfSineList) IsNull() bool {
+func (list *SineList) IsNull() bool {
 	return list == nil
 }
 
-func (*ValueOfSineList) Null() Element {
-	return NullValueOfSineList
+func (*SineList) Null() Element {
+	return NullSineList
 }
