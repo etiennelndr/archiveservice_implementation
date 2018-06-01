@@ -83,8 +83,6 @@ func Store() {
 		var t2 = time.Now().UnixNano() / int64(time.Millisecond)
 		// Calculate the difference between the two times
 		Delta = t2 - t1 + Delta
-		// Print the value (optional)
-		fmt.Println(Delta, math.Sin(float64(Delta)))
 		// Finally, store this value in the archive
 		store(archiveService, float32(math.Sin(float64(Delta))), Delta)
 	}
@@ -264,7 +262,6 @@ func retrieveInDB(nbrOfElements Long) ([]string, []string, error) {
 	var y []string
 	for i := 0; i < liste.Size(); i++ {
 		sine := liste.GetElementAt(i).(*Sine)
-		fmt.Println(sine.T)
 		t = append(t, fmt.Sprintf("%d", sine.T))
 		y = append(y, fmt.Sprintf("%f", sine.Y))
 	}
