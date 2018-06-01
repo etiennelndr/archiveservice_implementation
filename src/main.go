@@ -24,38 +24,48 @@
 package main
 
 import (
-	"os"
+	"sync"
+	"time"
 
 	work "github.com/etiennelndr/archiveservice_implementation/src/workonvalues"
 )
 
 func main() {
-	args := os.Args[1:]
+	var wg sync.WaitGroup
+	wg.Add(4)
 
-	if len(args) == 0 {
-		panic("There must be at least one argument")
-	}
-
-	switch args[0] {
-	case "show":
-		// Go-routine to show all the values
+	// Go-routine to show all the values
+	go func() {
+		// Wait a little for the two consumers to start
+		time.Sleep(6 * time.Second)
 		work.Show()
-		break
-	case "retrieve":
-		// Go-routine to retrieve all the values
+		wg.Done()
+	}()
+
+	// Go-routine to retrieve all the values
+	go func() {
+		// Wait a little for the provider to start
+		time.Sleep(2 * time.Second)
 		work.Retrieve()
-		break
-	case "store":
-		// Go-routine to store all the values
+		wg.Done()
+	}()
+
+	// Go-routine to store all the values
+	go func() {
+		// Wait a little for the provider to start
+		time.Sleep(2 * time.Second)
 		work.Store()
-		break
-	case "provider":
-		// Go-routine to start a provider
+		wg.Done()
+	}()
+
+	// Go-routine to start a provider
+	go func() {
 		work.Provider()
-		break
-	default:
-		panic("Unknown operation")
-	}
+		wg.Done()
+	}()
+
+	// Wait
+	wg.Wait()
 
 	return
 }
