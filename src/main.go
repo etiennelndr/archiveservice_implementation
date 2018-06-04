@@ -35,12 +35,12 @@ func main() {
 	wg.Add(3)
 
 	// Go-routine to show all the values
-	/*go func() {
+	go func() {
 		// Wait a little for the two consumers to start
 		time.Sleep(6 * time.Second)
 		work.Show()
 		wg.Done()
-	}()*/
+	}()
 
 	// Go-routine to retrieve all the values
 	go func() {
