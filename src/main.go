@@ -32,7 +32,7 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(4)
 
 	// Go-routine to show all the values
 	go func() {
