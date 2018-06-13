@@ -37,7 +37,7 @@ func main() {
 	// Go-routine to show all the values
 	go func() {
 		// Wait a little for the two consumers to start
-		time.Sleep(6 * time.Second)
+		time.Sleep(3 * time.Second)
 		work.Show()
 		wg.Done()
 	}()
@@ -53,7 +53,7 @@ func main() {
 	// Go-routine to store all the values
 	go func() {
 		// Wait a little for the provider to start
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 		work.Store()
 		wg.Done()
 	}()

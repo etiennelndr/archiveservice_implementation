@@ -39,8 +39,8 @@ import (
 
 	. "github.com/etiennelndr/archiveservice/archive/service"
 	. "github.com/etiennelndr/archiveservice/data"
+	. "github.com/etiennelndr/archiveservice/data/implementation"
 	. "github.com/etiennelndr/archiveservice/errors"
-	. "github.com/etiennelndr/archiveservice_implementation/data"
 )
 
 const (
@@ -73,7 +73,7 @@ func Store() {
 	archiveService = service.(*ArchiveService)
 
 	// Now, we can store the values
-	for i := 0; i < 150; i++ {
+	for i := 0; i < 1000; i++ {
 		var t1 = time.Now().UnixNano() / int64(time.Millisecond)
 		// Create a random value
 		var randValue = time.Duration(rand.Int63n(4) + 1)
@@ -96,7 +96,7 @@ func Provider() {
 	service := archiveService.CreateService()
 	archiveService = service.(*ArchiveService)
 
-	archiveService.StartProviders(providerURL)
+	archiveService.StartProvider(providerURL)
 }
 
 func store(archiveService *ArchiveService, valueOfSine float32, t int64) {
@@ -144,6 +144,7 @@ func Retrieve() {
 		}
 
 		if *nbrOfElementsInDB > 0 && *nbrOfElementsInDB != *nbrOfEelements {
+			println("COUNT:", *nbrOfElementsInDB-*nbrOfEelements)
 			// Retrieve in database
 			t, y, err := retrieveInDB(*nbrOfEelements)
 			if err != nil {
