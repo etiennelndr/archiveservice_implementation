@@ -51,7 +51,7 @@ const (
 )
 
 var (
-	Delta int64
+	delta float64
 )
 
 // Show :
@@ -72,19 +72,18 @@ func Store() {
 	service := archiveService.CreateService()
 	archiveService = service.(*ArchiveService)
 
+	step := 50.0
 	// Now, we can store the values
 	for i := 0; i < 1000; i++ {
-		var t1 = time.Now().UnixNano() / int64(time.Millisecond)
-		// Create a random value
-		var randValue = time.Duration(rand.Int63n(4) + 1)
-		// Wait during a random time
-		time.Sleep(randValue * time.Millisecond / 5)
-		// Then, retrieve the elapsed time
-		var t2 = time.Now().UnixNano() / int64(time.Millisecond)
-		// Calculate the difference between the two times
-		Delta = t2 - t1 + Delta
+		// Increment the delta of the sine
+		delta += 1 / step
 		// Finally, store this value in the archive
-		store(archiveService, float32(math.Sin(float64(Delta))), Delta)
+		store(archiveService, float32(math.Sin(float64(delta))), int64(i))
+
+		// Create a random value
+		var randValue = time.Duration(rand.Int63n(50) + 1)
+		// Wait a little
+		time.Sleep(randValue * time.Millisecond / 5)
 	}
 }
 
@@ -144,7 +143,6 @@ func Retrieve() {
 		}
 
 		if *nbrOfElementsInDB > 0 && *nbrOfElementsInDB != *nbrOfEelements {
-			println("COUNT:", *nbrOfElementsInDB-*nbrOfEelements)
 			// Retrieve in database
 			t, y, err := retrieveInDB(*nbrOfEelements)
 			if err != nil {
@@ -227,9 +225,10 @@ func retrieveInDB(nbrOfElements Long) ([]string, []string, error) {
 	archiveQueryList := NewArchiveQueryList(0)
 	var domain = IdentifierList([]*Identifier{NewIdentifier("fr"), NewIdentifier("cnes"), NewIdentifier("archiveservice"), NewIdentifier("implementation")})
 	archiveQuery := &ArchiveQuery{
-		Domain:    &domain,
-		Related:   Long(0),
-		SortOrder: NewBoolean(true),
+		Domain:        &domain,
+		Related:       Long(0),
+		SortOrder:     NewBoolean(true),
+		SortFieldName: NewString("id"),
 	}
 	archiveQueryList.AppendElement(archiveQuery)
 	var queryFilterList = NewCompositeFilterSetList(0)
@@ -246,7 +245,6 @@ func retrieveInDB(nbrOfElements Long) ([]string, []string, error) {
 
 	// Start the consumer
 	responses, errorsList, err = archiveService.Query(consumerRetrieveURL, providerURL, boolean, objectType, *archiveQueryList, queryFilterList)
-
 	if errorsList != nil {
 		return nil, nil, errors.New(string(*errorsList.ErrorComment))
 	} else if err != nil {
